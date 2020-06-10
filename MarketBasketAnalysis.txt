@@ -1,0 +1,76 @@
+---
+title: "Day14_market_basket_analysis"
+author: "SIDDHARTHA POOSLALA"
+date: "2/24/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("arulesViz")
+library(arulesViz)
+#install.packages("grid")
+#library(grid)
+```
+
+```{r}
+groceries <- read.transactions("e:/groceries.csv", sep = ",")
+str(groceries)
+summary(groceries)
+```
+
+```{r}
+#use the inspect() function in 
+# combination with the vector operators
+inspect(groceries[1:5])
+search()
+lsf.str("package:arules")
+```
+```{r}
+#The first five transactions can be viewed
+itemFrequency(groceries[,1:5])
+
+#view the support level for the first three items in the grocery data
+itemFrequencyPlot(groceries,support=0.1)
+```
+```{r}
+# use the itemFrequencyPlot() function. This allows you to produce a bar chart depicting the proportion of transactions containing certain items.
+itemFrequencyPlot(groceries,topN=20)
+```
+```{r}
+image(groceries[1:5])
+# The resulting diagram depicts a matrix with 5 rows and 169 columns, indicating the
+# 5 transactions and 169 possible items we requested. Cells in the matrix are filled with
+# black for transactions (rows) where the item (column) was purchased.
+image(sample(groceries,100))
+apriori(groceries)
+groceryrules <- apriori(groceries, parameter = list(support =
+0.006, confidence = 0.25, minlen = 2))
+groceryrules
+
+
+```
+
+```{r}
+write(groceryrules ,file="e:\\groceryrules.csv",sep=",",quote=TRUE,row.names = FALSE)
+```
+
+
+```{r}
+
+groceryrules_df <- as(groceryrules,"data.frame")
+groceryrules_df
+
+
+```
+
+```{r}
+inspect(sort(groceryrules,by="lift")[1:5])
+berryrules <- subset(groceryrules,items  %in% "berries")
+inspect(berryrules)
+
+
+```
